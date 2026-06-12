@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Placeholder — We Come In Peace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #03030a;
+      --surface: #0a0a18;
+      --border: #1a1a35;
+      --accent: #7b6fff;
+      --accent2: #ff6b9d;
+      --text: #e8e8f8;
+      --muted: #5a5a80;
+      --radius: 12px;
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px 80px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ── Starfield canvas ── */
+    #stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── Everything above stars ── */
+    .content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    /* ── UFO avatar ── */
+    .ufo-wrap {
+      margin-bottom: 28px;
+      animation: hover 4s ease-in-out infinite;
+    }
+
+    @keyframes hover {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-10px); }
+    }
+
+    .ufo {
+      width: 90px;
+      height: 90px;
+    }
+
+    /* ── Titles ── */
+    .artist-name {
+      font-family: 'Orbitron', monospace;
+      font-weight: 900;
+      font-size: clamp(1.4rem, 5vw, 2rem);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-align: center;
+      color: var(--text);
+    }
+
+    .album-title {
+      font-family: 'Orbitron', monospace;
+      font-weight: 400;
+      font-size: clamp(0.65rem, 2.5vw, 0.8rem);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    .tagline {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 300;
+      text-align: center;
+      max-width: 280px;
+      line-height: 1.6;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Beam divider ── */
+    .beam {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      margin: 28px auto;
+    }
+
+    /* ── Links ── */
+    .links {
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .section-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 10px 0 4px 2px;
+    }
+
+    .link-btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    }
+
+    .link-btn:hover {
+      border-color: var(--accent);
+      background: #0d0d22;
+      transform: translateY(-2px);
+    }
+
+    .link-btn svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      opacity: 0.8;
+    }
+
+    .link-btn .label { flex: 1; }
+
+    .link-btn .arrow {
+      color: var(--muted);
+      font-size: 0.8rem;
+      transition: color 0.2s;
+    }
+
+    .link-btn:hover .arrow { color: var(--accent); }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 56px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-family: 'Orbitron', monospace;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .ufo-wrap { animation: none; }
+      .link-btn  { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<div class="content">
+
+  <!-- UFO SVG avatar -->
+  <div class="ufo-wrap">
+    <svg class="ufo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <!-- Beam -->
+      <polygon points="38,62 62,62 72,95 28,95" fill="url(#beam)" opacity="0.35"/>
+      <defs>
+        <linearGradient id="beam" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#7b6fff"/>
+          <stop offset="100%" stop-color="#7b6fff" stop-opacity="0"/>
+        </linearGradient>
+        <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#7b6fff" stop-opacity="0.4"/>
+          <stop offset="100%" stop-color="#7b6fff" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <!-- Glow -->
+      <ellipse cx="50" cy="58" rx="32" ry="10" fill="url(#glow)"/>
+      <!-- Saucer body -->
+      <ellipse cx="50" cy="58" rx="30" ry="8" fill="#1a1a40" stroke="#7b6fff" stroke-width="1.2"/>
+      <!-- Dome -->
+      <ellipse cx="50" cy="52" rx="16" ry="10" fill="#0f0f2e" stroke="#9d96ff" stroke-width="1"/>
+      <!-- Windows -->
+      <circle cx="41" cy="56" r="3" fill="#ff6b9d" opacity="0.9"/>
+      <circle cx="50" cy="57" r="3" fill="#7b6fff" opacity="0.9"/>
+      <circle cx="59" cy="56" r="3" fill="#6bffda" opacity="0.9"/>
+      <!-- Antenna -->
+      <line x1="50" y1="42" x2="50" y2="36" stroke="#9d96ff" stroke-width="1.2"/>
+      <circle cx="50" cy="35" r="2" fill="#ff6b9d"/>
+    </svg>
+  </div>
+
+  <!-- ✏️ Update artist name -->
+  <h1 class="artist-name">Placeholder</h1>
+  <p class="album-title">✦ We Come In Peace ✦</p>
+  <!-- ✏️ Update tagline -->
+  <p class="tagline">Greetings, earthling. Take me to your playlist.</p>
+
+  <div class="beam"></div>
+
+  <div class="links">
+
+    <p class="section-label">Listen</p>
+
+    <!-- ✏️ Update href to your Spotify link -->
+    <a href="https://open.spotify.com" class="link-btn" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10" fill="#1DB954" opacity="0.15"/>
+        <path d="M7.5 14.5c2.5-1 5.5-1 8 .5M7 11.5c3-1.2 6.5-1.2 9.5.5M8 8.5c2.5-1 6-1 8.5.5" stroke="#1DB954" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span class="label">Spotify</span>
+      <span class="arrow">↗</span>
+    </a>
+
+    <!-- ✏️ Update href to your Apple Music link -->
+    <a href="https://music.apple.com" class="link-btn" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10" fill="#fc3c44" opacity="0.15"/>
+        <path d="M9 17V8l8-2v2.5l-6 1.5V17" stroke="#fc3c44" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="9" cy="17" r="1.5" fill="#fc3c44"/>
+        <circle cx="17" cy="15" r="1.5" fill="#fc3c44"/>
+      </svg>
+      <span class="label">Apple Music</span>
+      <span class="arrow">↗</span>
+    </a>
+
+    <!-- ✏️ Update href to your Bandcamp link -->
+    <a href="https://bandcamp.com" class="link-btn" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10" fill="#1da0c3" opacity="0.15"/>
+        <path d="M5 15.5l5-7H19l-5 7H5z" fill="#1da0c3" opacity="0.8"/>
+      </svg>
+      <span class="label">Bandcamp</span>
+      <span class="arrow">↗</span>
+    </a>
+
+    <p class="section-label" style="margin-top:14px;">Watch</p>
+
+    <!-- ✏️ Update href to your YouTube link -->
+    <a href="https://youtube.com" class="link-btn" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10" fill="#FF0000" opacity="0.15"/>
+        <rect x="5" y="7" width="14" height="10" rx="2" stroke="#FF0000" stroke-width="1.4"/>
+        <path d="M10 9.5l5 2.5-5 2.5V9.5z" fill="#FF0000"/>
+      </svg>
+      <span class="label">YouTube</span>
+      <span class="arrow">↗</span>
+    </a>
+
+    <p class="section-label" style="margin-top:14px;">Follow</p>
+
+    <!-- ✏️ Update href to your Instagram link -->
+    <a href="https://instagram.com" class="link-btn" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10" fill="#e1306c" opacity="0.15"/>
+        <rect x="6" y="6" width="12" height="12" rx="3" stroke="#e1306c" stroke-width="1.4"/>
+        <circle cx="12" cy="12" r="3" stroke="#e1306c" stroke-width="1.4"/>
+        <circle cx="16" cy="8" r="1" fill="#e1306c"/>
+      </svg>
+      <span class="label">Instagram</span>
+      <span class="arrow">↗</span>
+    </a>
+
+    <!-- ✏️ Update href or swap for TikTok/Twitter etc -->
+    <a href="https://tiktok.com" class="link-btn" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10" fill="#69C9D0" opacity="0.15"/>
+        <path d="M14 7c0 2 1.5 3 3 3v2c-1 0-2-.3-3-1v5a4 4 0 1 1-4-4v2a2 2 0 1 0 2 2V7h2z" fill="#69C9D0"/>
+      </svg>
+      <span class="label">TikTok</span>
+      <span class="arrow">↗</span>
+    </a>
+
+  </div>
+
+  <footer>transmission from deep space</footer>
+
+</div>
+
+<script>
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  function initStars() {
+    stars = [];
+    for (let i = 0; i < 180; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.4 + 0.2,
+        o: Math.random(),
+        speed: Math.random() * 0.4 + 0.1,
+        twinkleSpeed: Math.random() * 0.02 + 0.005,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+  }
+
+  function draw(t) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(s => {
+      s.phase += s.twinkleSpeed;
+      const opacity = 0.3 + 0.7 * ((Math.sin(s.phase) + 1) / 2);
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(200, 200, 255, ${opacity * s.o})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  initStars();
+  requestAnimationFrame(draw);
+  window.addEventListener('resize', () => { resize(); initStars(); });
+</script>
+
+</body>
+</html>
